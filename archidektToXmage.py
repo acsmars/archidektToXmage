@@ -35,6 +35,7 @@ try:
     data = requests.get(URL).json()
 except:
     print("Exception getting deck {}. It likely doesn't exist, is private, or archidekt is down.")
+    exit(1)
 
 deckName = data.get("name")
 
