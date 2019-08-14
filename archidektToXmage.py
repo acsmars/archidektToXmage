@@ -45,16 +45,18 @@ sideboard = []
 for card in data.get("cards"):
     newCard = Card()
 
-    newCard.name = card.get("card").get("oracleCard").get("name")
+    newCard.name = card.get("card").get("oracleCard").get("name").split(" //")[0]
     newCard.quantity = card.get("quantity")
     newCard.setCollectorNumber = card.get("card").get("collectorNumber")
     newCard.setCode = card.get("card").get("edition").get("editioncode").upper()
 
     category = card.get("category")
-    if (category == ""):
-        mainboard.append(newCard)
-    elif (category == "Commander"):
+    if (category == "Commander"):
         sideboard.append(newCard)
+    elif (category == "Maybeboard"):
+        pass
+    else:
+        mainboard.append(newCard)
 
 with open("{}.dck".format(deckName), "w") as deckFile:
     for card in mainboard:
