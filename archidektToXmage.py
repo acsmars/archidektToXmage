@@ -21,7 +21,7 @@ class Card:
 
 
 # parse input
-parser = argparse.ArgumentParser(description='Process some integers.')
+parser = argparse.ArgumentParser(description='Public Deck ID')
 parser.add_argument("deckID")
 args = parser.parse_args()
 print("Downloading deck with ID {}".format(args.deckID))
