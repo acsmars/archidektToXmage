@@ -28,7 +28,7 @@ print("Downloading deck with ID {}".format(args.deckID))
 
 # api-endpoint
 
-
+deckDirectory = "decks"
 URL = "https://archidekt.com/api/decks/{}/".format(args.deckID)
 
 try:
@@ -58,7 +58,10 @@ for card in data.get("cards"):
     else:
         mainboard.append(newCard)
 
-with open("{}.dck".format(deckName), "w") as deckFile:
+if not os.path.exists(deckDirectory):
+    os.makedirs(deckDirectory)
+
+with open("{}/{}.dck".format(deckDirectory, deckName), "w") as deckFile:
     for card in mainboard:
         deckFile.write(card.xmageFormat() + os.linesep)
 
