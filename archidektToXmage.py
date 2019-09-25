@@ -72,16 +72,37 @@ def downloadDeck(deckID):
             deckFile.write("SB: {}".format(card.xmageFormat()) + os.linesep)
 
 
-def listDecks(userID):
-    # user api endpooint
+def getDecksByUserID(userID):
+    # user ID api endpooint
     URL = "https://archidekt.com/api/users/{}/decks/".format(userID)
-
     try:
         data = requests.get(URL).json()
     except:
         print("Exception getting deck {}. It likely doesn't exist, is private, or archidekt is down.")
         return
+
+    if data.get("decks") == None:
+        print("Deck is either private or contains no cards, skipping.")
+        return
+
     deckIDs = [x.get("id") for x in data.get("decks")]
+    print("Found decks:{}".format(deckIDs))
+    return deckIDs
+
+def getDecksByUserName(username):
+    # user ID api endpooint
+    URL = "https://archidekt.com/api/decks/cards/?owner={}".format(username)
+    try:
+        data = requests.get(URL).json()
+    except:
+        print("Exception getting deck {}. It likely doesn't exist, is private, or archidekt is down.")
+        return
+
+    if data.get("results") == None:
+        print("Deck is either private or contains no cards, skipping.")
+        return
+
+    deckIDs = [x.get("id") for x in data.get("results")]
     print("Found decks:{}".format(deckIDs))
     return deckIDs
 
@@ -92,10 +113,17 @@ parser.add_argument("resourceID")
 parser.add_argument('--user', dest='mode', action='store_const',
                     const="user", default="deck",
                     help='Fetch all decks by this user rather than a deck ID')
+parser.add_argument('--userID', dest='mode', action='store_const',
+                    const="userID", default="deck",
+                    help='Fetch all decks by this user rather than a deck ID')
 args = parser.parse_args()
 if args.mode == "user":
     print("Downloading all decks from user with ID {}".format(args.resourceID))
-    for deckID in listDecks(args.resourceID):
+    for deckID in getDecksByUserID(args.resourceID):
+        downloadDeck(deckID)
+elif args.mode == "userID":
+    print("Downloading all decks from user with ID {}".format(args.resourceID))
+    for deckID in getDecksByUserID(args.resourceID):
         downloadDeck(deckID)
 elif args.mode == "deck":
     downloadDeck(args.resourceID)
